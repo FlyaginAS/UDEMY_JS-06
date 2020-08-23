@@ -1,0 +1,14 @@
+in package.json in the end add
+ "engines": {
+      "node": ">=12.0.0"
+    }
+  чтобы не ругались линтеры и т.д.
+***********************************************************************
+prettier установить через npm и включить в IDE указав путь к файлу
+***********************************************************************
+eslint установить такой командой
+
+npm i eslint prettier eslint-config-prettier eslint-plugin-prettier eslint-config-airbnb eslint-plugin-node eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react --save-dev
+
+
+и так же включить  IDE
