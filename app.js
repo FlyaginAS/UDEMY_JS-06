@@ -10,6 +10,7 @@ const budgetController = (function () {
     this.description = description;
     this.value = value;
   };
+
   const data = {
     allItems: {
       exp: [],
@@ -19,6 +20,15 @@ const budgetController = (function () {
       exp: 0,
       inc: 0,
     },
+    budget: 0,
+    percentage: -1,
+  };
+  const calculateTotal = function (type) {
+    let sum = 0;
+    data.allItems[type].forEach(function (current) {
+      sum += +current.value;
+    });
+    data.totals[type] = sum;
   };
 
   return {
@@ -44,6 +54,27 @@ const budgetController = (function () {
     },
     testing: function () {
       console.log(data);
+    },
+    calculateBudget: function () {
+      //calculate total incme and expenses
+      calculateTotal('exp');
+      calculateTotal('inc');
+      //calc budget: income - expenses
+      data.budget = data.totals.inc - data.totals.exp;
+      //calc % of income
+      if (data.totals > 0) {
+        data.percentage = Math.round((data.totals.exp / data.totals.inc) * 100);
+      } else {
+        data.percentage = -1;
+      }
+    },
+    getBudget: function () {
+      return {
+        budget: data.budget,
+        totalInc: data.totals.inc,
+        totalExp: data.totals.exp,
+        percentage: data.percentage,
+      };
     },
   };
 })();
@@ -123,8 +154,11 @@ const controller = (function (budgetCtrl, UICtrl) {
 
   const updateBudget = function () {
     //1)calculate the budget
+    budgetCtrl.calculateBudget();
     //2) return the budget
+    const budget = budgetCtrl.getBudget();
     //3) display the budget
+    console.log(budget);
   };
   const ctrlAddItem = function () {
     let input;
@@ -140,7 +174,8 @@ const controller = (function (budgetCtrl, UICtrl) {
     UICtrl.addListItem(newItem, input.type);
     //4)clear fields
     UICtrl.clearFields();
-    //5) calculate the budget
+    //5) calculate and update the budget
+    updateBudget();
   };
   return {
     init: function () {
