@@ -1,4 +1,4 @@
-//BUDGET CONTROLLER
+//BUDGET CONTROLLER****************************************************
 const budgetController = (function () {
   const Expence = function (id, description, value) {
     this.id = id;
@@ -48,7 +48,7 @@ const budgetController = (function () {
   };
 })();
 
-//UI CONTROLLER
+//UI CONTROLLER****************************************************************
 const UIController = (function () {
   //Some code
   const DOMstrings = {
@@ -56,6 +56,8 @@ const UIController = (function () {
     inputDescription: '.add__description',
     inputValue: '.add__value',
     inputBtn: '.add__btn',
+    incomeContainer: '.income__list',
+    expensesContainer: '.expenses__list',
   };
   return {
     getInput: function () {
@@ -68,10 +70,34 @@ const UIController = (function () {
     getDOMstrings: function () {
       return DOMstrings;
     },
+    addListItem: function (obj, type) {
+      //create html string with placeholder text
+      let html;
+      let newHtml;
+      let element;
+      if (type === 'inc') {
+        element = DOMstrings.incomeContainer;
+
+        html =
+          '<div class="item clearfix" id="inc-%id%"> <div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+      } else if (type === 'exp') {
+        element = DOMstrings.expensesContainer;
+
+        html =
+          '<div class="item clearfix" id="exp-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+      }
+      //repalace placeholder actual data
+      newHtml = html
+        .replace('%id%', obj.id)
+        .replace('%description%', obj.description)
+        .replace('%value%', obj.value);
+      //inset hmtl into DOM
+      document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
+    },
   };
 })();
 
-//GLOBAL APP CONTROLLER
+//GLOBAL APP CONTROLLER**********************************************************
 const controller = (function (budgetCtrl, UICtrl) {
   const setupEventListeners = function () {
     const DOM = UICtrl.getDOMstrings();
@@ -91,6 +117,7 @@ const controller = (function (budgetCtrl, UICtrl) {
     //2) add the item to the budget conroller
     newItem = budgetCtrl.addItem(input.type, input.description, input.value);
     //3)add the item to the UI
+    UICtrl.addListItem(newItem, input.type);
     //4) calculate the budget
     //5) display the budget on the UI
   };
