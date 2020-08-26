@@ -121,19 +121,26 @@ const controller = (function (budgetCtrl, UICtrl) {
     });
   };
 
+  const updateBudget = function () {
+    //1)calculate the budget
+    //2) return the budget
+    //3) display the budget
+  };
   const ctrlAddItem = function () {
     let input;
     let newItem;
     //1) get the field input data
     input = UICtrl.getInput();
     //2) add the item to the budget conroller
+    if (!input.description || !input.value) {
+      return;
+    }
     newItem = budgetCtrl.addItem(input.type, input.description, input.value);
     //3)add the item to the UI
     UICtrl.addListItem(newItem, input.type);
-    //clear fields
+    //4)clear fields
     UICtrl.clearFields();
-    //4) calculate the budget
-    //5) display the budget on the UI
+    //5) calculate the budget
   };
   return {
     init: function () {
