@@ -196,6 +196,21 @@ const UIController = (function () {
         document.querySelector(DOMstrings.percentageLabel).textContent = '---';
       }
     },
+    displayPercentages: function (percentages) {
+      const fields = document.querySelectorAll(DOMstrings.expensesPercLabel);
+      const nodeListForEach = function (list, callback) {
+        for (let i = 0; i < list.length; i++) {
+          callback(list[i], i);
+        }
+      };
+      nodeListForEach(fields, function (current, index) {
+        if (percentages[index] > 0) {
+          current.textContent = `${percentages[index]}%`;
+        } else {
+          current.textContent = '---';
+        }
+      });
+    },
   };
 })();
 
@@ -227,8 +242,8 @@ const controller = (function (budgetCtrl, UICtrl) {
     budgetCtrl.calculatePercentages();
     //2)read percentages from the budget contorller
     const percentages = budgetCtrl.getPercentages();
-    //3)update the UI
-    console.log(percentages);
+    //3)update the UIU
+    UICtrl.displayPercentages(percentages);
   };
   const ctrlAddItem = function () {
     let input;
