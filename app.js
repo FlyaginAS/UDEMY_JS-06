@@ -4,6 +4,17 @@ const budgetController = (function () {
     this.id = id;
     this.description = description;
     this.value = value;
+    this.percentage = -1;
+  };
+  Expence.prototype.calcPercentage = function (totalIncome) {
+    if (totalIncome > 0) {
+      this.percentage = Math.round((this.value / totalIncome) * 100);
+    } else {
+      this.percentage = -1;
+    }
+  };
+  Expence.prototype.getPercentage = function () {
+    return this.percentage;
   };
   const Income = function (id, description, value) {
     this.id = id;
@@ -45,7 +56,7 @@ const budgetController = (function () {
 
       // Create new item based on 'inc' or 'exp' type
       if (type === 'exp') {
-        newItem = new Expense(ID, des, val);
+        newItem = new Expence(ID, des, val);
       } else if (type === 'inc') {
         newItem = new Income(ID, des, val);
       }
@@ -80,6 +91,17 @@ const budgetController = (function () {
       } else {
         data.percentage = -1;
       }
+    },
+    calculatePercentages: function () {
+      data.allItems.exp.forEach(function (current) {
+        current.calcPercentage(data.totals.inc);
+      });
+    },
+    getPercentages: function () {
+      const allPerc = data.allItems.exp.map(function (cur) {
+        return cur.getPercentage();
+      });
+      return allPerc;
     },
     getBudget: function () {
       return {
@@ -200,7 +222,14 @@ const controller = (function (budgetCtrl, UICtrl) {
     //3) display the budget
     UICtrl.displayBudget(budget);
   };
-  const updatePercentages = function () {};
+  const updatePercentages = function () {
+    //1) calculate percentages
+    budgetCtrl.calculatePercentages();
+    //2)read percentages from the budget contorller
+    const percentages = budgetCtrl.getPercentages();
+    //3)update the UI
+    console.log(percentages);
+  };
   const ctrlAddItem = function () {
     let input;
     let newItem;
