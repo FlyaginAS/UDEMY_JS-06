@@ -132,6 +132,27 @@ const UIController = (function () {
     expensesPercLabel: '.item__percentage',
     dateLabel: '.budget__title--month',
   };
+  const formatNumber = function (num, type) {
+    //выводим в нужном нам оформлении -отеление запятой десятимчных, знаки и т.д.
+    /*
+     * 2310.4567 -> 2,310.46
+     * 2000 -> +2,000.00
+     * */
+    let numSplit;
+    let int;
+    let dec;
+    num = Math.abs(num);
+    num = num.toFixed(2);
+    numSplit = num.split('.');
+    int = numSplit[0];
+    if (int.length > 3) {
+      int = `${int.substr(0, int.length - 3)},${int.substr(int.length - 3, 3)}`;
+    }
+    //dec
+    dec = numSplit[1];
+    return `${type === 'exp' ? '-' : '+'} ${int}.${dec}`;
+  };
+
   return {
     getInput: function () {
       return {
@@ -162,7 +183,7 @@ const UIController = (function () {
       newHtml = html
         .replace('%id%', obj.id)
         .replace('%description%', obj.description)
-        .replace('%value%', obj.value);
+        .replace('%value%', formatNumber(obj.value, type));
       //inset hmtl into DOM
       document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
     },
@@ -183,10 +204,19 @@ const UIController = (function () {
       fieldsArr[0].focus();
     },
     displayBudget: function (obj) {
-      document.querySelector(DOMstrings.budgetLabel).textContent = obj.budget;
-      document.querySelector(DOMstrings.incomeLabel).textContent = obj.totalInc;
-      document.querySelector(DOMstrings.expensesLabel).textContent =
-        obj.totalExp;
+      let type;
+      obj.budget > 0 ? (type = 'inc') : (type = 'exp');
+      document.querySelector(DOMstrings.budgetLabel).textContent = formatNumber(
+        obj.budget,
+        type
+      );
+      document.querySelector(DOMstrings.incomeLabel).textContent = formatNumber(
+        obj.totalInc,
+        'inc'
+      );
+      document.querySelector(
+        DOMstrings.expensesLabel
+      ).textContent = formatNumber(obj.totalExp, 'exp');
 
       if (obj.percentage > 0) {
         document.querySelector(
