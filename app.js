@@ -34,22 +34,30 @@ const budgetController = (function () {
   return {
     addItem: function (type, des, val) {
       let newItem;
-      let ID = 0;
-      //create new ID
+      let ID;
+
+      //[1 2 3 4 5], next ID = 6
+      //[1 2 4 6 8], next ID = 9
+      // ID = last ID + 1
+
+      // Create new ID
       if (data.allItems[type].length > 0) {
-        ID = data.allItems[type][data.allItems[type].length - 1].id;
+        ID = data.allItems[type][data.allItems[type].length - 1].id + 1;
       } else {
         ID = 0;
       }
 
-      //create new Item based on 'inc' or 'exp' type
+      // Create new item based on 'inc' or 'exp' type
       if (type === 'exp') {
-        newItem = new Expence(ID, des, val);
+        newItem = new Expense(ID, des, val);
       } else if (type === 'inc') {
         newItem = new Income(ID, des, val);
       }
-      //push it into our data structure
+
+      // Push it into our data structure
       data.allItems[type].push(newItem);
+
+      // Return the new element
       return newItem;
     },
     testing: function () {
@@ -116,8 +124,7 @@ const UIController = (function () {
       if (type === 'inc') {
         element = DOMstrings.incomeContainer;
 
-        html =
-          '<div class="item clearfix" id="inc-%id%"> <div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+        html = `<div class="item clearfix" id="inc-%id%"> <div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>`;
       } else if (type === 'exp') {
         element = DOMstrings.expensesContainer;
 
@@ -171,6 +178,9 @@ const controller = (function (budgetCtrl, UICtrl) {
         ctrlAddItem();
       }
     });
+    document
+      .querySelector(DOM.container)
+      .addEventListener('click', ctrlDeleteItem);
   };
 
   const updateBudget = function () {
@@ -198,6 +208,24 @@ const controller = (function (budgetCtrl, UICtrl) {
     //5) calculate and update the budget
     updateBudget();
   };
+
+  let ctrlDeleteItem = function (event) {
+    let itemID;
+    let splitID;
+    let type;
+    let ID;
+    itemID = event.target.closest('.item').id;
+    if (itemID) {
+      //inc-1
+      splitID = itemID.split('-');
+      type = splitID[0];
+      ID = splitID[1];
+      //1)delete the item form the data structure
+      //2)delete the item from the UI
+      //3)update and show the new budget
+    }
+  };
+
   return {
     init: function () {
       console.log('app has started');
