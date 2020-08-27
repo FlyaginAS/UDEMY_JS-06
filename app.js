@@ -36,10 +36,6 @@ const budgetController = (function () {
       let newItem;
       let ID;
 
-      //[1 2 3 4 5], next ID = 6
-      //[1 2 4 6 8], next ID = 9
-      // ID = last ID + 1
-
       // Create new ID
       if (data.allItems[type].length > 0) {
         ID = data.allItems[type][data.allItems[type].length - 1].id + 1;
@@ -59,6 +55,15 @@ const budgetController = (function () {
 
       // Return the new element
       return newItem;
+    },
+    deleteItem: function (type, id) {
+      const ids = data.allItems[type].map(function (current) {
+        return current.id;
+      });
+      index = ids.indexOf(id);
+      if (index !== -1) {
+        data.allItems[type].splice(index, 1);
+      }
     },
     testing: function () {
       console.log(data);
@@ -219,8 +224,9 @@ const controller = (function (budgetCtrl, UICtrl) {
       //inc-1
       splitID = itemID.split('-');
       type = splitID[0];
-      ID = splitID[1];
+      ID = +splitID[1];
       //1)delete the item form the data structure
+      budgetCtrl.deleteItem(type, ID);
       //2)delete the item from the UI
       //3)update and show the new budget
     }
